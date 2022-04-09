@@ -5,6 +5,9 @@ class Vertex:
         self.name=name
         self.adjacentVertices=adjacentVertices
 
+    def __str__(self):
+        return f'Airport {self.name} with neighbours {self.adjacentVertices}'
+
     def __repr__(self):
         return self.name
 
@@ -16,29 +19,26 @@ class Flight:
         self.arrival=arrival
         self.departure=departure
     
+    def __str__(self):
+        return f'Flight: {self.name} | Airport({repr(self.origin)}-{repr(self.destination)}) | Arrival: {self.arrival} | Departure: {self.departure}'
+
     def __repr__(self):
         return self.name
 
 class Graph:
-    def __init__(self,vertices):
+    def __init__(self,vertices,edges):
         self.vertices=vertices
+        self.edges=edges
     
 #Dijkstra's Algorithm
-def FlightAgency(flights, graph, source, destination, start_time):
-    # Initializing the arrival time
-    T={}
-    T[source]=start_time
-
-    # for all vertices which are not source set T[vertex]=infinity
-    for vertex in graph.vertices:
-        if vertex is not source:
-            T[vertex]=float('inf')
-
+def FlightAgency(graph, source, destination, start_time):
+    node_data={v:{'arrival':float('inf'),'pred':[]} for v in graph.vertices}
+    node_data[source]['arrival']=start_time
     queue=[]
 
     for vertex in graph.vertices:
         #Insert the vertex and time calculated into the min heap
-        heapq.heappush(queue,(T[vertex],id(vertex), vertex))
+        heapq.heappush(queue,(node_data[vertex]['arrival'],id(vertex), vertex))
 
     while queue:
         #While the queue is not empty pop the vertex with minimum arrival time
@@ -46,13 +46,13 @@ def FlightAgency(flights, graph, source, destination, start_time):
         # For all the adjacent vertices of the popped vertex
         for adjacentVertex in v.adjacentVertices:
             # If the adjacent vertex is present in the queue, then the vertex is yet to be visited, else the vertex is visited
-            if (T[adjacentVertex],id(adjacentVertex),adjacentVertex) in queue:
+            if (node_data[adjacentVertex]['arrival'],id(adjacentVertex),adjacentVertex) in queue:
                 flight_queue=[]
                 #determining the next flight
-                for flight in flights:
+                for flight in graph.edges:
                     if (flight.origin==v and flight.destination==adjacentVertex):
                         #check if the departure time of the flight is greater than the arrival time of the origin
-                        if(flight.departure>=T[v]):
+                        if(flight.departure>=node_data[v]['arrival']):
                             heapq.heappush(flight_queue,(id(flight),flight.arrival))
                         
                 temp_time=float('inf')
@@ -60,13 +60,14 @@ def FlightAgency(flights, graph, source, destination, start_time):
                 if flight_queue:
                     temp_time=flight_queue[0][1]
                 
-                if temp_time<T[adjacentVertex]:
-                    T[adjacentVertex]=temp_time
-                    heapq.heappush(queue,(T[adjacentVertex],id(adjacentVertex),adjacentVertex))
+                if temp_time<node_data[adjacentVertex]['arrival']:
+                    node_data[adjacentVertex]['arrival']=temp_time
+                    node_data[adjacentVertex]['pred']=node_data[v]['pred']+list(v.name)
+                    heapq.heappush(queue,(node_data[adjacentVertex]['arrival'],id(adjacentVertex),adjacentVertex))
             else:
                 break
-    
-    return T[destination]
+    node_data[destination]['pred']=node_data[destination]['pred']+list(destination.name)
+    return node_data[destination]
     
 
                     
