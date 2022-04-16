@@ -52,7 +52,7 @@ if __name__=="__main__":
     for flight in flights:
         print(str(flight))
     if shortestRoute['arrival'] != float('inf'):
-        print(f'The earliest arrival time from airport {startVertex} to the airport {endVertex} is {convert_to_time(shortestRoute["arrival"])} using the route {shortestRoute["pred"]}')
+        print(f'The earliest arrival time from airport {repr(startVertex)} to the airport {repr(endVertex)} is {convert_to_time(shortestRoute["arrival"])} using the route {shortestRoute["pred"]}')
     else:
-        print(f'There are no available flights from airport {startVertex} to airport {endVertex} after {convert_to_time(startTime)}')
+        print(f'There are no available flights from airport {repr(startVertex)} to airport {repr(endVertex)} after {convert_to_time(startTime)}')
    

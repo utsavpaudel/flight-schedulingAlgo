@@ -38,9 +38,11 @@ def FlightAgency(graph, source, destination, start_time):
 
     for vertex in graph.vertices:
         #Insert the vertex and time calculated into the min heap
-        heapq.heappush(queue,(node_data[vertex]['arrival'],id(vertex), vertex))
+        queue.append((node_data[vertex]['arrival'],id(vertex), vertex))
+    heapq.heapify(queue)
 
     while queue:
+        print(queue)
         #While the queue is not empty pop the vertex with minimum arrival time
         v=heapq.heappop(queue)[-1]
         # For all the adjacent vertices of the popped vertex
@@ -53,17 +55,21 @@ def FlightAgency(graph, source, destination, start_time):
                     if (flight.origin==v and flight.destination==adjacentVertex):
                         #check if the departure time of the flight is greater than the arrival time of the origin
                         if(flight.departure>=node_data[v]['arrival']):
-                            heapq.heappush(flight_queue,(id(flight),flight.arrival))
-                        
+                            flight_queue.append((id(flight),flight.arrival))
+
+                heapq.heapify(flight_queue)
                 temp_time=float('inf')
-                
+                initial_time=0
                 if flight_queue:
                     temp_time=flight_queue[0][1]
                 
                 if temp_time<node_data[adjacentVertex]['arrival']:
+                    initial_time= node_data[adjacentVertex]['arrival']
                     node_data[adjacentVertex]['arrival']=temp_time
                     node_data[adjacentVertex]['pred']=node_data[v]['pred']+list(v.name)
-                    heapq.heappush(queue,(node_data[adjacentVertex]['arrival'],id(adjacentVertex),adjacentVertex))
+                    queue.remove((initial_time, id(adjacentVertex), adjacentVertex))
+                    queue.append((node_data[adjacentVertex]['arrival'],id(adjacentVertex),adjacentVertex))
+                    heapq.heapify(queue)
             else:
                 break
     node_data[destination]['pred']=node_data[destination]['pred']+list(destination.name)
