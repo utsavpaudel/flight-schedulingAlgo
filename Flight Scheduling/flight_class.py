@@ -31,7 +31,7 @@ class Graph:
         self.edges=edges
     
 #Dijkstra's Algorithm
-def FlightAgency(graph, source, destination, start_time):
+def Dijkstra(graph, source, destination, start_time):
     node_data={v:{'arrival':float('inf'),'pred':[]} for v in graph.vertices}
     node_data[source]['arrival']=start_time
     queue=[]
@@ -42,7 +42,7 @@ def FlightAgency(graph, source, destination, start_time):
     heapq.heapify(queue)
 
     while queue:
-        print(queue)
+        # print(queue)
         #While the queue is not empty pop the vertex with minimum arrival time
         v=heapq.heappop(queue)[-1]
         # For all the adjacent vertices of the popped vertex

@@ -42,7 +42,7 @@ if __name__=="__main__":
     startTime=convert_to_float(time(2,0))
 
     #Applying Dijkstra's Shortest Path Alogrithm
-    shortestRoute = FlightAgency(graph, startVertex, endVertex, startTime)
+    shortestRoute = Dijkstra(graph, startVertex, endVertex, startTime)
 
     #Displaying the result
     print("Vertices in the Graph")
